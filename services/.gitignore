@@ -1,0 +1,64 @@
+### Centralized gitignore file ###
+############################
+# Spring Boot / Java
+############################
+
+# Maven build output
+**/target/
+**/build/
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+**/*.log
+
+############################
+# Spring configuration (IMPORTANT)
+############################
+
+# All application config files
+**/application.yml
+**/application.yaml
+**/application-*.yml
+**/application-*.yaml
+
+############################
+# IDE files
+############################
+
+# IntelliJ IDEA
+.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+
+############################
+# OS files
+############################
+
+.DS_Store
+Thumbs.db
+
+############################
+# Environment / Secrets
+############################
+
+.env
+.env.*
+*.key
+*.pem
+
+############################
+# Test reports
+############################
+
+**/surefire-reports/
+**/failsafe-reports/
+
+############################
+# Optional documentation
+############################
+
+HELP.md
+
