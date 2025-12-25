@@ -23,10 +23,6 @@ import java.util.Set;
 })
 public class UserProfile extends BaseModel
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
@@ -125,9 +121,6 @@ public class UserProfile extends BaseModel
         certifications.remove(certification);
         certification.getProfiles().remove(this);
     }
-
-
-
 
 
 }

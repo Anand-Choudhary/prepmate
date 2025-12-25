@@ -14,18 +14,14 @@ import lombok.*;
 @Builder
 public class Projects extends BaseModel
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false)
-    private String name;
+    private String projectName;
 
     @Column(nullable = false,length = 1000)
-    private String description;
+    private String projectDescription;
 
     @Column(nullable = false,length = 500)
-    private String techStack;
+    private String projectTechStack;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)

@@ -16,10 +16,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true,of = "name")
 public class Skills extends BaseModel{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, unique = true)
     private String name;
 

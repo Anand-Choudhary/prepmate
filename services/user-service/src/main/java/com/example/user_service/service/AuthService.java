@@ -6,6 +6,7 @@ import com.example.user_service.dto.requestDto.LoginRequestDto;
 import com.example.user_service.dto.requestDto.RegisterRequestDto;
 import com.example.user_service.dto.responseDto.AuthResponseDto;
 import com.example.user_service.entity.User;
+import com.example.user_service.entity.UserProfile;
 import com.example.user_service.exception.UsernameAlreadyExistsException;
 import com.example.user_service.repository.UserRepository;
 import com.example.user_service.security.JwtUtil;
@@ -68,6 +69,11 @@ public class AuthService {
         user.setDob(request.getDateOfBirth());
 
         User savedUser = userRepository.save(user);
+
+        UserProfile profile = UserProfile.builder()
+                .user(savedUser)
+                .build();
+        savedUser.setProfile(profile);
 
         return new AuthResponseDto(savedUser.getId(),savedUser.getName(), savedUser.getEmail());
     }
