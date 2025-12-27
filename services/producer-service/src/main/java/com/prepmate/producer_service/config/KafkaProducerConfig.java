@@ -1,10 +1,12 @@
 package com.prepmate.producer_service.config;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -18,6 +20,21 @@ public class KafkaProducerConfig
 {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
+
+    @Value("${kafka.topics.email}")
+    private String emailTopic;
+
+    @Value("${kafka.topics.sms}")
+    private String smsTopic;
+
+    @Value("${kafka.topics.push}")
+    private String pushTopic;
+
+    @Value("${kafka.topics.webhook}")
+    private String webhookTopic;
+
+    @Value("${kafka.topics.dlq}")
+    private String dlqTopic;
 
     @Value("${spring.kafka.producer.acks}")
     private String acknowledgementConfig;
@@ -69,5 +86,55 @@ public class KafkaProducerConfig
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
+    @Bean
+    public NewTopic emailTopic() {
+        return TopicBuilder.name(emailTopic)
+                .partitions(partitions)
+                .replicas(replicationFactor)
+                .config("retention.ms", "604800000") // 7 days
+                .config("compression.type", "snappy")
+                .build();
+    }
+
+    @Bean
+    public NewTopic smsTopic() {
+        return TopicBuilder.name(smsTopic)
+                .partitions(partitions)
+                .replicas(replicationFactor)
+                .config("retention.ms", "604800000")
+                .config("compression.type", "snappy")
+                .build();
+    }
+
+    @Bean
+    public NewTopic pushTopic() {
+        return TopicBuilder.name(pushTopic)
+                .partitions(partitions)
+                .replicas(replicationFactor)
+                .config("retention.ms", "604800000")
+                .config("compression.type", "snappy")
+                .build();
+    }
+
+    @Bean
+    public NewTopic webhookTopic() {
+        return TopicBuilder.name(webhookTopic)
+                .partitions(partitions)
+                .replicas(replicationFactor)
+                .config("retention.ms", "604800000")
+                .config("compression.type", "snappy")
+                .build();
+    }
+
+    @Bean
+    public NewTopic dlqTopic() {
+        return TopicBuilder.name(dlqTopic)
+                .partitions(partitions)
+                .replicas(replicationFactor)
+                .config("retention.ms", "2592000000") // 30 days
+                .build();
+    }
+
 
 }
