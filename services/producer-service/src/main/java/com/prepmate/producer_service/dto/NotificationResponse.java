@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseDto
+public class NotificationResponse
 {
     private String id;
     private NotificationStatus status;

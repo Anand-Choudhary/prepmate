@@ -1,0 +1,30 @@
+package com.interview_platform.payment_service.repository;
+
+import com.interview_platform.payment_service.entity.Wallet;
+import com.interview_platform.payment_service.utils.WalletStatus;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface WalletRepository extends JpaRepository<Wallet, Long> {
+
+    Optional<Wallet> findByUserId(String userId);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("SELECT w FROM Wallet w WHERE w.userId = :userId")
+    Optional<Wallet> findByUserIdWithLock(@Param("userId") String userId);
+
+    boolean existsByUserId(String userId);
+
+    List<Wallet> findByStatus(WalletStatus status);
+
+    @Query("SELECT COUNT(w) FROM Wallet w WHERE w.status = :status")
+    long countByStatus(@Param("status") WalletStatus status);
+}

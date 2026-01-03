@@ -1,4 +1,5 @@
-package com.prepmate.producer_service.dto;
+package com.prepmate.consumer_service.dto;
+
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -31,3 +32,4 @@ public class EmailNotificationRequest extends NotificationRequest
     private boolean isHtml = false;
     private Map<String, byte[]> attachments;
 }
+
