@@ -40,7 +40,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
             String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-            // Check if Bearer token is present
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return onError(exchange, "Invalid authorization header format", HttpStatus.UNAUTHORIZED);
             }
@@ -56,7 +55,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 String username = extractUsername(token);
                 ServerHttpRequest modifiedRequest = exchange.getRequest()
                         .mutate()
-                        .header("X-User-Id", username)
+                        .header("X-User-email", username)
                         .build();
 
                 return chain.filter(exchange.mutate().request(modifiedRequest).build());

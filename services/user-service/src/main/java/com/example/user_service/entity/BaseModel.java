@@ -1,10 +1,14 @@
 package com.example.user_service.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
 
+@Setter
+@Getter
 @MappedSuperclass
 @ToString
 public class BaseModel
@@ -29,30 +33,6 @@ public class BaseModel
     private Date updatedAt;
 
     public BaseModel() {
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
 
