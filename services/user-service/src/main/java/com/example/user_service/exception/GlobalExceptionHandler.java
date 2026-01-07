@@ -3,6 +3,7 @@ package com.example.user_service.exception;
 import com.example.user_service.dto.responseDto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,8 +48,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResourceNotFoundException(Exception ex) {
 
-    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.error("You are not authorized to access this resource"));

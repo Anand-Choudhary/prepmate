@@ -1,9 +1,15 @@
 package com.example.user_service.dto.requestDto;
 
 import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserRequestDto
 {
     @NotBlank(message = "Name is required")
