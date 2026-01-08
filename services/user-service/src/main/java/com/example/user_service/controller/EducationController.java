@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users/{userId}/education")
+@RequestMapping("/prep-mate/api/users/{userId}/education")
 @RequiredArgsConstructor
 public class EducationController {
 
