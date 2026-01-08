@@ -50,9 +50,9 @@ public class ExperienceController {
         return ResponseEntity.ok(ApiResponse.success("Experience details updated", updatedExperience));
     }
 
-//    @DeleteMapping("/{experienceId}")
-//    public ResponseEntity<Void> deleteExperience(@PathVariable Long experienceId) {
-//        experienceService.deleteExperience(experienceId);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{experienceId}")
+    public ResponseEntity<ApiResponse<Boolean>> deleteExperience(@PathVariable Long experienceId) {
+        experienceService.deleteExperience(experienceId);
+        return ResponseEntity.ok(ApiResponse.success("Experience deleted", true));
+    }
 }
