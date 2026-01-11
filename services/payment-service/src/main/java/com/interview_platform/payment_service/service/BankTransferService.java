@@ -22,8 +22,8 @@ public class BankTransferService {
     private final RazorpayClient razorpayClient;
 
     public TransferResponse initiateTransfer(TransferToBankRequest request) throws Exception {
-        if (request.getAmount().compareTo(new BigDecimal("100")) < 0) {
-            throw new RuntimeException("Minimum transfer amount is ₹100");
+        if (request.getAmount().compareTo(new BigDecimal("1000")) < 0) {
+            throw new RuntimeException("Minimum transfer amount is ₹1000");
         }
 
         BigDecimal balance = walletService.getBalance(request.getUserId());

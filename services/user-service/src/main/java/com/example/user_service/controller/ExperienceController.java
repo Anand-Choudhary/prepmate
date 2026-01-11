@@ -15,22 +15,21 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/prep-mate/api/users/{userId}/experience")
+@RequestMapping("api/users/experience")
 @RequiredArgsConstructor
 public class ExperienceController {
 
     private final ExperienceService experienceService;
 
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ApiResponse<ExperienceResponseDto>> addExperience(
-            @PathVariable Long userId,
             @Valid @RequestBody ExperienceRequestDto experienceRequestDTO) {
-        ExperienceResponseDto experience = experienceService.addExperience(userId, experienceRequestDTO);
+        ExperienceResponseDto experience = experienceService.addExperience(experienceRequestDTO);
         return ResponseEntity.ok(ApiResponse.success("Experience details added", experience));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<ExperienceResponseDto>>> getUserExperience(@PathVariable Long userId) {
         List<ExperienceResponseDto> experience = experienceService.getExperienceByUserId(userId);
         return ResponseEntity.ok(ApiResponse.success("Experience details fetched", experience));

@@ -8,6 +8,7 @@ import com.example.user_service.exception.ResourceNotFoundException;
 import com.example.user_service.mapper.EntityMapper;
 import com.example.user_service.repository.ExperienceRepository;
 import com.example.user_service.repository.UserProfileRepository;
+import com.example.user_service.security.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,9 @@ public class ExperienceService {
     private final EntityMapper entityMapper;
 
     @Transactional
-    public ExperienceResponseDto addExperience(Long userId, ExperienceRequestDto experienceRequestDTO) {
+    public ExperienceResponseDto addExperience(ExperienceRequestDto experienceRequestDTO)
+    {
+        Long userId = UserContext.getUserId();
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
 

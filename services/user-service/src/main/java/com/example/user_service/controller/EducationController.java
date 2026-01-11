@@ -12,23 +12,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prep-mate/api/users/{userId}/education")
+@RequestMapping("/api/users/education")
 @RequiredArgsConstructor
 public class EducationController {
 
     private final EducationService educationService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<ApiResponse<EducationResponseDto>> addEducation(
-            @PathVariable Long userId,
             @Valid @RequestBody EducationRequestDto educationRequestDTO) {
-        EducationResponseDto education = educationService.addEducation(userId, educationRequestDTO);
+        EducationResponseDto education = educationService.addEducation(educationRequestDTO);
         return ResponseEntity.ok(ApiResponse.success("Education details added", education));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<EducationResponseDto>>> getUserEducation(@PathVariable Long userId) {
-        List<EducationResponseDto> education = educationService.getEducationByUserId(userId);
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<EducationResponseDto>>> getUserEducation() {
+        List<EducationResponseDto> education = educationService.getEducationByUserId();
         return ResponseEntity.ok(ApiResponse.success("Education details fetched", education));
     }
 

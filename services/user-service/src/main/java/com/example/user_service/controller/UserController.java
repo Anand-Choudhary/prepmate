@@ -17,24 +17,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prep-mate/api/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController
 {
     private final AuthService authService;
     private UserService userService;
 
-    @PostMapping("/")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto request) {
-        AuthResponseDto response = authService.login(request);
-        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> register(@Valid @RequestBody RegisterRequestDto request) {
-        AuthResponseDto response = authService.register(request);
-        return ResponseEntity.ok(ApiResponse.success("Account registered", response));
-    }
+//    @PostMapping("/")
+//    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto request) {
+//        AuthResponseDto response = authService.login(request);
+//        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+//    }
+//
+//    @PostMapping("/")
+//    public ResponseEntity<ApiResponse<AuthResponseDto>> register(@Valid @RequestBody RegisterRequestDto request) {
+//        AuthResponseDto response = authService.register(request);
+//        return ResponseEntity.ok(ApiResponse.success("Account registered", response));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> getUserById(@PathVariable Long id) {

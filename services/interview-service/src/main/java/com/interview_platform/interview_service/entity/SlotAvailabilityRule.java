@@ -16,7 +16,7 @@ import java.time.LocalTime;
 public class SlotAvailabilityRule extends BaseModel
 {
     @Column(name = "interviewer_id", nullable = false)
-    private String interviewerId;
+    private Long interviewerId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week", nullable = false)

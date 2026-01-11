@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
@@ -53,9 +54,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
                 // Extract username from token and add to headers
                 String username = extractUsername(token);
+                Long userId = extractUserId(token);
                 ServerHttpRequest modifiedRequest = exchange.getRequest()
                         .mutate()
-                        .header("X-User-email", username)
+                        .header("X-userId", String.valueOf(userId))
                         .build();
 
                 return chain.filter(exchange.mutate().request(modifiedRequest).build());
@@ -67,6 +69,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         };
     }
 
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
     private void validateToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         Jwts.parser()
@@ -75,15 +81,28 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 .parseSignedClaims(token);
     }
 
-    private String extractUsername(String token) {
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+//    private String extractUsername(String token) {
+//        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+//        Claims claims = Jwts.parser()
+//                .verifyWith(key)
+//                .build()
+//                .parseSignedClaims(token)
+//                .getPayload();
+//        return claims.getSubject();
+//    }
+
+    private Claims extractAllClaims(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-        Claims claims = Jwts.parser()
+
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-
-        return claims.getSubject();
     }
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {

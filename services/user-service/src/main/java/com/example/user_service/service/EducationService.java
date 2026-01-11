@@ -8,6 +8,7 @@ import com.example.user_service.exception.ResourceNotFoundException;
 import com.example.user_service.mapper.EntityMapper;
 import com.example.user_service.repository.EducationRepository;
 import com.example.user_service.repository.UserProfileRepository;
+import com.example.user_service.security.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,9 @@ public class EducationService {
     private final EntityMapper entityMapper;
 
     @Transactional
-    public EducationResponseDto addEducation(Long userId, EducationRequestDto educationRequestDTO) {
+    public EducationResponseDto addEducation(EducationRequestDto educationRequestDTO)
+    {
+        Long userId = UserContext.getUserId();
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
 
@@ -43,7 +46,8 @@ public class EducationService {
     }
 
     @Transactional(readOnly = true)
-    public List<EducationResponseDto> getEducationByUserId(Long userId) {
+    public List<EducationResponseDto> getEducationByUserId() {
+        Long userId = UserContext.getUserId();
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User profile not found"));
 

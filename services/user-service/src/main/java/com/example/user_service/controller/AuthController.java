@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/prep-mate/api/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController
 {

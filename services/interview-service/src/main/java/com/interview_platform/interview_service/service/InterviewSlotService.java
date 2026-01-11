@@ -37,9 +37,6 @@ public class InterviewSlotService {
     @Value("${interview.booking.buffer-minutes:15}")
     private int bufferMinutes;
 
-    /**
-     * Create a single interview slot
-     */
     @Transactional
     public SlotCreatedResponse createSlot(String interviewerId, CreateSlotRequest request) {
         log.info("Creating slot for interviewer: {}", interviewerId);
@@ -97,9 +94,6 @@ public class InterviewSlotService {
                 .build();
     }
 
-    /**
-     * Create multiple slots in bulk
-     */
     @Transactional
     public BulkSlotCreatedResponse createBulkSlots(String interviewerId, BulkCreateSlotRequest request) {
         log.info("Creating bulk slots for interviewer: {} from {} to {}",

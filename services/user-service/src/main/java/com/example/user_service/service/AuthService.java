@@ -47,6 +47,7 @@ public class AuthService {
         // Generate token with additional claims
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
+        claims.put("userId", user.getId());
 //        claims.put("role", user.getRole());
 
         String token = jwtUtil.generateToken(user.getEmail(), claims);

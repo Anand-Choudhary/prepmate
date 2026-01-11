@@ -22,7 +22,7 @@ public class PaymentGatewayService {
 
     public AddMoneyResponse initiateAddMoney(AddMoneyRequest request) throws Exception {
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", request.getAmount().multiply(new BigDecimal("100")).intValue());
+        orderRequest.put("amount", request.getAmount().multiply(new BigDecimal("1000")).intValue());
         orderRequest.put("currency", "INR");
         orderRequest.put("receipt", UUID.randomUUID().toString());
 

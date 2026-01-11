@@ -2,6 +2,8 @@ package com.example.user_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +36,7 @@ public class UserProfile extends BaseModel
             fetch = FetchType.LAZY
     )
     @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
     private List<Education> education = new ArrayList<>();
 
     @OneToMany(
@@ -43,6 +46,7 @@ public class UserProfile extends BaseModel
             fetch = FetchType.LAZY
     )
     @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
     private List<Projects> projects = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -52,6 +56,7 @@ public class UserProfile extends BaseModel
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
     @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Skills> skills = new HashSet<>();
 
     @OneToMany(
@@ -61,6 +66,7 @@ public class UserProfile extends BaseModel
             fetch = FetchType.LAZY
     )
     @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
     private List<Experience> experience = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -70,6 +76,7 @@ public class UserProfile extends BaseModel
             inverseJoinColumns = @JoinColumn(name = "certification_id")
     )
     @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Certification> certifications = new HashSet<>();
 
     public void addEducation(Education edu) {

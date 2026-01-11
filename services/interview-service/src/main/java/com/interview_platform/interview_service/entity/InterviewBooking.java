@@ -18,13 +18,13 @@ import java.util.UUID;
 public class InterviewBooking extends BaseModel
 {
     @Column(name = "slot_id", nullable = false)
-    private String slotId;
+    private Long slotId;
 
     @Column(name = "interviewer_id", nullable = false)
-    private String interviewerId;
+    private Long interviewerId;
 
     @Column(name = "interviewee_id", nullable = false)
-    private String intervieweeId;
+    private Long intervieweeId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status", nullable = false)

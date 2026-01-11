@@ -14,13 +14,10 @@ import java.time.LocalDateTime;
 public class InterviewSlot extends BaseModel{
 
     @Column(name = "interviewer_id", nullable = false)
-    private String interviewerId;
+    private Long interviewerId;
 
     @Column(name = "interviewee_id")
-    private String intervieweeId;
-
-    @Column(nullable = false)
-    private String title;
+    private Long intervieweeId;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -72,7 +69,7 @@ public class InterviewSlot extends BaseModel{
         return startTime.isAfter(LocalDateTime.now().plusHours(minHours));
     }
 
-    public void markAsBooked(String intervieweeId, String videoRoomId, String meetingLink) {
+    public void markAsBooked(Long intervieweeId, String videoRoomId, String meetingLink) {
         this.intervieweeId = intervieweeId;
         this.videoRoomId = videoRoomId;
         this.meetingLink = meetingLink;
