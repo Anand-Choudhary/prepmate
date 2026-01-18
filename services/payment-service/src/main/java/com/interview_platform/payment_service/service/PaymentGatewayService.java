@@ -46,7 +46,7 @@ public class PaymentGatewayService {
 
         Order order = razorpayClient.orders.fetch(orderId);
         BigDecimal amount = new BigDecimal((char[]) order.get("amount")).divide(new BigDecimal("100"));
-        String userId = order.get("notes").get("userId");
+        Long userId = order.get("notes").get("userId");
 
         walletService.creditWallet(userId, amount, paymentId, "Add money via Razorpay");
     }

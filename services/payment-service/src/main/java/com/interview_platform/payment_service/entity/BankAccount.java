@@ -14,7 +14,7 @@ import lombok.*;
 public class BankAccount extends BaseModel {
 
     @Column(nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false)
     private String accountHolderName;

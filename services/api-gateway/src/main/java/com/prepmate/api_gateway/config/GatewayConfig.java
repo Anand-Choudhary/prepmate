@@ -32,6 +32,12 @@ public class GatewayConfig
                                 .filter(filter.apply(new AuthenticationFilter.Config())))
                         .uri("lb://user-service"))
 
+                .route("interview-service-protected", r -> r.path("/prep-mate/api/interviews/**")
+                        .filters(f -> f
+                                .rewritePath("/prep-mate/api/(?<segment>.*)", "/api/${segment}")
+                                .filter(filter.apply(new AuthenticationFilter.Config())))
+                        .uri("lb://interview-service"))
+
                 // Add more protected routes for other services as needed
                 .build();
     }

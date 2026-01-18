@@ -28,8 +28,8 @@ public class InterviewBookingController {
      */
     @PostMapping("/slots/{slotId}/book")
     public ResponseEntity<BookingSuccessResponse> bookSlot(
-            @PathVariable String slotId,
-            @RequestHeader("X-User-Id") String intervieweeId,
+            @PathVariable Long slotId,
+            @RequestHeader("X-User-Id") Long intervieweeId,
             @Valid @RequestBody(required = false) BookSlotRequest request
     ) {
         log.info("Booking slot: {} by interviewee: {}", slotId, intervieweeId);
@@ -41,7 +41,7 @@ public class InterviewBookingController {
      * Get booking details
      */
     @GetMapping("/bookings/{bookingId}")
-    public ResponseEntity<BookingResponse> getBooking(@PathVariable String bookingId) {
+    public ResponseEntity<BookingResponse> getBooking(@PathVariable Long bookingId) {
         log.info("Getting booking: {}", bookingId);
         BookingResponse response = bookingService.getBooking(bookingId);
         return ResponseEntity.ok(response);
@@ -52,8 +52,8 @@ public class InterviewBookingController {
      */
     @PostMapping("/bookings/{bookingId}/cancel")
     public ResponseEntity<Void> cancelBooking(
-            @PathVariable String bookingId,
-            @RequestHeader("X-User-Id") String userId
+            @PathVariable Long bookingId,
+            @RequestHeader("X-User-Id") Long userId
     ) {
         log.info("Cancelling booking: {} by user: {}", bookingId, userId);
         bookingService.cancelBooking(bookingId, userId);
@@ -65,7 +65,7 @@ public class InterviewBookingController {
      */
     @GetMapping("/my-interviews")
     public ResponseEntity<List<BookingResponse>> getMyInterviews(
-            @RequestHeader("X-User-Id") String userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         log.info("Getting interviews for interviewee: {}", userId);
         List<BookingResponse> bookings = bookingService.getUserBookings(userId, false);
@@ -77,7 +77,7 @@ public class InterviewBookingController {
      */
     @GetMapping("/my-conducted-interviews")
     public ResponseEntity<List<BookingResponse>> getMyConductedInterviews(
-            @RequestHeader("X-User-Id") String userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         log.info("Getting conducted interviews for interviewer: {}", userId);
         List<BookingResponse> bookings = bookingService.getUserBookings(userId, true);
@@ -89,8 +89,8 @@ public class InterviewBookingController {
      */
     @PostMapping("/bookings/{bookingId}/reschedule")
     public ResponseEntity<BookingSuccessResponse> rescheduleBooking(
-            @PathVariable String bookingId,
-            @RequestHeader("X-User-Id") String userId,
+            @PathVariable Long bookingId,
+            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody RescheduleRequest request
     ) {
         log.info("Rescheduling booking: {} to slot: {} by user: {}",

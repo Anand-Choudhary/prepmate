@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BalanceResponse {
-    private String userId;
+    private Long userId;
     private BigDecimal balance;
     private String currency;
 }

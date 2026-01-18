@@ -20,21 +20,19 @@ public class DistributedLockService {
     @Value("${interview.lock.wait-time-seconds:5}")
     private long waitTime;
 
-    @Value("${interview.lock.lease-time-seconds:30}")
-    private long leaseTime;
+//    @Value("${interview.lock.lease-time-seconds:30}")
+//    private long leaseTime;
 
     private static final String LOCK_PREFIX = "lock:slot:";
 
-    /**
-     * Execute operation with distributed lock
-     */
-    public <T> T executeWithLock(String slotId, Supplier<T> operation) {
+
+    public <T> T executeWithLock(Long slotId, Supplier<T> operation) {
         String lockKey = LOCK_PREFIX + slotId;
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
             // Try to acquire lock with timeout
-            boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS);
+            boolean acquired = lock.tryLock(waitTime, TimeUnit.SECONDS);
 
             if (!acquired) {
                 log.warn("Failed to acquire lock for slot: {}", slotId);
@@ -62,7 +60,7 @@ public class DistributedLockService {
     /**
      * Execute void operation with distributed lock
      */
-    public void executeWithLock(String slotId, Runnable operation) {
+    public void executeWithLock(Long slotId, Runnable operation) {
         executeWithLock(slotId, () -> {
             operation.run();
             return null;

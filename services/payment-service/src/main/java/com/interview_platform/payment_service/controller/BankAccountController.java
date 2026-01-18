@@ -1,6 +1,7 @@
 package com.interview_platform.payment_service.controller;
 
 import com.interview_platform.payment_service.dto.AddBankAccountRequest;
+import com.interview_platform.payment_service.dto.ApiResponse;
 import com.interview_platform.payment_service.dto.BankAccountDTO;
 import com.interview_platform.payment_service.service.BankAccountService;
 import jakarta.validation.Valid;
@@ -17,14 +18,19 @@ import java.util.List;
 public class BankAccountController {
     private final BankAccountService bankAccountService;
 
+
     @PostMapping
-    public ResponseEntity<BankAccountDTO> addBankAccount(@Valid @RequestBody AddBankAccountRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bankAccountService.addBankAccount(request));
+    public ResponseEntity<ApiResponse<BankAccountDTO>> addBankAccount(@Valid @RequestBody AddBankAccountRequest request)
+    {
+        BankAccountDTO bankAccount = bankAccountService.addBankAccount(request);
+        return ResponseEntity.ok(ApiResponse.success("Account added", bankAccount));
     }
 
     @GetMapping
-    public ResponseEntity<List<BankAccountDTO>> getBankAccounts(@RequestParam String userId) {
-        return ResponseEntity.ok(bankAccountService.getBankAccounts(userId));
+    public ResponseEntity<ApiResponse<List<BankAccountDTO>>> getBankAccounts(@RequestParam Long userId)
+    {
+
+        List<BankAccountDTO> accounts = bankAccountService.getBankAccounts(userId);
+        return ResponseEntity.ok(ApiResponse.success("Account fetched", accounts));
     }
 }

@@ -10,12 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, String> {
+public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, Long> {
 
     List<InterviewSlot> findByInterviewerIdAndStatusAndStartTimeAfterOrderByStartTimeAsc(
             String interviewerId,
@@ -28,6 +29,16 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, St
             @Param("status") SlotStatus status,
             @Param("after") LocalDateTime after
     );
+
+    @Query("SELECT ia FROM InterviewSlot ia " +
+            "WHERE ia.interviewerId = :interviewerId " +
+            "AND ia.slotDate BETWEEN :startDate AND :endDate " +
+            "AND ia.isActive = true " +
+            "ORDER BY ia.availabilityDate, ia.startTime")
+    List<InterviewSlot> findAvailableSlotsForInterviewer
+            (Long interviewerId,
+             LocalDate startDate,
+             LocalDate endDate);
 
     // Find slot with pessimistic write lock (for booking)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -61,7 +72,7 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, St
             "AND s.status = 'BOOKED' " +
             "AND DATE(s.startTime) = DATE(:date)")
     long countBookingsForIntervieweeOnDate(
-            @Param("intervieweeId") String intervieweeId,
+            @Param("intervieweeId") Long intervieweeId,
             @Param("date") LocalDateTime date
     );
 
@@ -91,8 +102,8 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, St
     @Query("SELECT COUNT(s) > 0 FROM InterviewSlot s WHERE s.intervieweeId = :intervieweeId " +
             "AND s.id = :slotId AND s.status = 'BOOKED'")
     boolean existsByIntervieweeIdAndSlotId(
-            @Param("intervieweeId") String intervieweeId,
-            @Param("slotId") String slotId
+            @Param("intervieweeId") Long intervieweeId,
+            @Param("slotId") Long slotId
     );
 
     // Find upcoming interviews for notifications

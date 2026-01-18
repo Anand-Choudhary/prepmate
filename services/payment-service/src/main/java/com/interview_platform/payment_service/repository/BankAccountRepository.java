@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
 
-    List<BankAccount> findByUserId(String userId);
+    List<BankAccount> findByUserId(Long userId);
 
-    Optional<BankAccount> findByUserIdAndIsPrimary(String userId, Boolean isPrimary);
+    Optional<BankAccount> findByUserIdAndIsPrimary(Long userId, Boolean isPrimary);
 
     @Query("SELECT b FROM BankAccount b WHERE b.userId = :userId AND b.isPrimary = true")
     Optional<BankAccount> findPrimaryByUserId(@Param("userId") String userId);

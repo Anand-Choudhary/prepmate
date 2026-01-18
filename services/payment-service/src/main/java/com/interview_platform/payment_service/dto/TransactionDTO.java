@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TransactionDTO {
     private Long id;
-    private String userId;
+    private Long userId;
     private String transactionType;
     private String transactionCategory;
     private BigDecimal amount;

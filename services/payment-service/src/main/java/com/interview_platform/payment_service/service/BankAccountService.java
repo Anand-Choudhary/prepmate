@@ -41,7 +41,7 @@ public class BankAccountService {
         return mapToDTO(bankAccount);
     }
 
-    public List<BankAccountDTO> getBankAccounts(String userId) {
+    public List<BankAccountDTO> getBankAccounts(Long userId) {
         return bankAccountRepository.findByUserId(userId).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());

@@ -57,7 +57,7 @@ public class InterviewBookingService {
      * Uses distributed locking + optimistic locking
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public BookingSuccessResponse bookSlot(String slotId, String intervieweeId, BookSlotRequest request) {
+    public BookingSuccessResponse bookSlot(Long slotId, Long intervieweeId, BookSlotRequest request) {
         log.info("Booking request for slot: {} by interviewee: {}", slotId, intervieweeId);
 
         // Check for duplicate booking attempt (idempotency)
@@ -93,7 +93,7 @@ public class InterviewBookingService {
     /**
      * Perform actual booking (called within distributed lock)
      */
-    private BookingSuccessResponse performBooking(String slotId, String intervieweeId, BookSlotRequest request) {
+    private BookingSuccessResponse performBooking(Long slotId, Long intervieweeId, BookSlotRequest request) {
         // 1. Fetch and validate slot
         InterviewSlot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new SlotNotFoundException("Interview slot not found: " + slotId));
@@ -101,21 +101,21 @@ public class InterviewBookingService {
         validateSlotForBooking(slot, intervieweeId);
 
         // 2. Check daily booking limit
-        long bookingsToday = slotRepository.countBookingsForIntervieweeOnDate(
-                intervieweeId, LocalDateTime.now()
-        );
-
-        if (bookingsToday >= maxBookingsPerDay) {
-            throw new BookingLimitExceededException(
-                    "You have reached the maximum bookings limit for today: " + maxBookingsPerDay
-            );
-        }
+//        long bookingsToday = slotRepository.countBookingsForIntervieweeOnDate(
+//                intervieweeId, LocalDateTime.now()
+//        );
+//
+//        if (bookingsToday >= maxBookingsPerDay) {
+//            throw new BookingLimitExceededException(
+//                    "You have reached the maximum bookings limit for today: " + maxBookingsPerDay
+//            );
+//        }
 
         // 3. Create video room
-        VideoServiceClient.VideoRoomResponse videoRoom = createVideoRoom(slot);
+//        VideoServiceClient.VideoRoomResponse videoRoom = createVideoRoom(slot);
 
         // 4. Update slot status (with optimistic locking)
-        slot.markAsBooked(intervieweeId, videoRoom.getRoomId(), videoRoom.getMeetingLink());
+        slot.markAsBooked(intervieweeId);
         slot = slotRepository.save(slot); // Version will be incremented automatically
 
         // 5. Create booking record
@@ -150,7 +150,7 @@ public class InterviewBookingService {
     /**
      * Validate slot availability and booking conditions
      */
-    private void validateSlotForBooking(InterviewSlot slot, String intervieweeId) {
+    private void validateSlotForBooking(InterviewSlot slot, Long intervieweeId) {
         // Check if slot is available
         if (slot.getStatus() != SlotStatus.AVAILABLE) {
             throw new SlotNotAvailableException("This slot is no longer available");
@@ -182,7 +182,6 @@ public class InterviewBookingService {
     @Retry(name = "videoService")
     private VideoRoomResponse createVideoRoom(InterviewSlot slot) {
         CreateVideoRoomRequest request = CreateVideoRoomRequest.builder()
-                .title(slot.getTitle())
                 .hostId(slot.getInterviewerId())
                 .scheduledTime(slot.getStartTime())
                 .durationMinutes(slot.getDurationMinutes())
@@ -212,7 +211,7 @@ public class InterviewBookingService {
      */
     private InterviewBooking createBookingRecord(InterviewSlot slot, BookSlotRequest request) {
         return InterviewBooking.builder()
-                .slotId(String.valueOf(slot.getId()))
+                .slotId(slot.getId())
                 .interviewerId(slot.getInterviewerId())
                 .intervieweeId(slot.getIntervieweeId())
                 .bookingStatus(BookingStatus.CONFIRMED)
@@ -223,15 +222,15 @@ public class InterviewBookingService {
     /**
      * Send booking notifications
      */
-    @CircuitBreaker(name = "notificationService")
-    private void sendBookingNotifications(InterviewSlot slot, InterviewBooking booking) {
-        try {
-            // Notify interviewee
-            Map<String, Object> intervieweeData = new HashMap<>();
-            intervieweeData.put("bookingReference", booking.getBookingReference());
-            intervieweeData.put("interviewTitle", slot.getTitle());
-            intervieweeData.put("startTime", slot.getStartTime());
-            intervieweeData.put("meetingLink", slot.getMeetingLink());
+//    @CircuitBreaker(name = "notificationService")
+//    private void sendBookingNotifications(InterviewSlot slot, InterviewBooking booking) {
+//        try {
+//            // Notify interviewee
+//            Map<String, Object> intervieweeData = new HashMap<>();
+//            intervieweeData.put("bookingReference", booking.getBookingReference());
+//            intervieweeData.put("interviewTitle", slot.getTitle());
+//            intervieweeData.put("startTime", slot.getStartTime());
+//            intervieweeData.put("meetingLink", slot.getMeetingLink());
 
 //            notificationServiceClient.sendNotification(
 //                    NotificationServiceClient.NotificationRequest.builder()
@@ -244,10 +243,10 @@ public class InterviewBookingService {
 //            );
 
             // Notify interviewer
-            Map<String, Object> interviewerData = new HashMap<>();
-            interviewerData.put("bookingReference", booking.getBookingReference());
-            interviewerData.put("interviewTitle", slot.getTitle());
-            interviewerData.put("startTime", slot.getStartTime());
+//            Map<String, Object> interviewerData = new HashMap<>();
+//            interviewerData.put("bookingReference", booking.getBookingReference());
+//            interviewerData.put("interviewTitle", slot.getTitle());
+//            interviewerData.put("startTime", slot.getStartTime());
 
 //            notificationServiceClient.sendNotification(
 //                    NotificationServiceClient.NotificationRequest.builder()
@@ -258,12 +257,12 @@ public class InterviewBookingService {
 //                            .priority("MEDIUM")
 //                            .build()
 //            );
-
-        } catch (Exception e) {
-            log.error("Failed to send booking notifications", e);
-            // Don't fail the booking if notifications fail
-        }
-    }
+//
+//        } catch (Exception e) {
+//            log.error("Failed to send booking notifications", e);
+//            // Don't fail the booking if notifications fail
+//        }
+//    }
 
     /**
      * Build booking success response
@@ -272,13 +271,13 @@ public class InterviewBookingService {
         return BookingSuccessResponse.builder()
                 .bookingId(String.valueOf(booking.getId()))
                 .bookingReference(booking.getBookingReference())
-                .slotId(String.valueOf(slot.getId()))
+                .slotId(slot.getId())
                 .interviewerId(slot.getInterviewerId())
                 .intervieweeId(slot.getIntervieweeId())
                 .startTime(slot.getStartTime())
                 .endTime(slot.getEndTime())
-                .meetingLink(slot.getMeetingLink())
-                .videoRoomId(slot.getVideoRoomId())
+//                .meetingLink(slot.getMeetingLink())
+//                .videoRoomId(slot.getVideoRoomId())
                 .message("Interview booked successfully!")
                 .bookedAt(slot.getBookedAt())
                 .build();
@@ -288,7 +287,7 @@ public class InterviewBookingService {
      * Cancel a booking
      */
     @Transactional
-    public void cancelBooking(String bookingId, String userId) {
+    public void cancelBooking(Long bookingId, Long userId) {
         InterviewBooking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found: " + bookingId));
 
@@ -334,7 +333,7 @@ public class InterviewBookingService {
      * Get booking details
      */
     @Transactional(readOnly = true)
-    public BookingResponse getBooking(String bookingId) {
+    public BookingResponse getBooking(Long bookingId) {
         InterviewBooking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found: " + bookingId));
 
@@ -348,7 +347,7 @@ public class InterviewBookingService {
      * Get user's bookings
      */
     @Transactional(readOnly = true)
-    public List<BookingResponse> getUserBookings(String userId, boolean asInterviewer) {
+    public List<BookingResponse> getUserBookings(Long userId, boolean asInterviewer) {
         List<InterviewBooking> bookings;
 
         if (asInterviewer) {
@@ -373,12 +372,12 @@ public class InterviewBookingService {
 
     private BookingResponse buildBookingResponse(InterviewBooking booking, InterviewSlot slot) {
         return BookingResponse.builder()
-                .id(String.valueOf(booking.getId()))
+                .id(booking.getId())
                 .bookingReference(booking.getBookingReference())
                 .slotId(booking.getSlotId())
                 .interviewerId(booking.getInterviewerId())
                 .intervieweeId(booking.getIntervieweeId())
-                .title(slot != null ? slot.getTitle() : null)
+//                .title(slot != null ? slot.getTitle() : null)
                 .startTime(slot != null ? slot.getStartTime() : null)
                 .endTime(slot != null ? slot.getEndTime() : null)
                 .meetingLink(slot != null ? slot.getMeetingLink() : null)
@@ -386,6 +385,7 @@ public class InterviewBookingService {
                 .notes(booking.getNotes())
                 .bookingStatus(booking.getBookingStatus().name())
                 .createdAt(booking.getCreatedAt())
+                .updatedAt(booking.getUpdatedAt())
                 .build();
     }
 }

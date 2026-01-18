@@ -21,10 +21,10 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
 
     Page<WalletTransaction> findByUserId(String userId, Pageable pageable);
 
-    Page<WalletTransaction> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
+    Page<WalletTransaction> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     List<WalletTransaction> findByUserIdAndCreatedAtBetween(
-            String userId, LocalDateTime start, LocalDateTime end);
+            Long userId, LocalDateTime start, LocalDateTime end);
 
     Optional<WalletTransaction> findByReferenceId(String referenceId);
 

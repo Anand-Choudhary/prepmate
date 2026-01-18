@@ -5,6 +5,7 @@ import com.interview_platform.payment_service.entity.Wallet;
 import com.interview_platform.payment_service.entity.WalletTransaction;
 import com.interview_platform.payment_service.repository.WalletRepository;
 import com.interview_platform.payment_service.repository.WalletTransactionRepository;
+import com.interview_platform.payment_service.security.UserContext;
 import com.interview_platform.payment_service.utils.TransactionCategory;
 import com.interview_platform.payment_service.utils.TransactionStatus;
 import com.interview_platform.payment_service.utils.TransactionType;
@@ -29,7 +30,9 @@ public class WalletService {
 //    private final EventPublisherService eventPublisher;
 
     @Transactional
-    public WalletDTO createWallet(String userId) {
+    public WalletDTO createWallet()
+    {
+        Long userId = UserContext.getUserId();
         if (walletRepository.existsByUserId(userId)) {
             throw new RuntimeException("Wallet already exists for user: " + userId);
         }
@@ -48,7 +51,8 @@ public class WalletService {
         return mapToDTO(wallet);
     }
 
-    public BigDecimal getBalance(String userId) {
+    public BigDecimal getBalance(Long userId)
+    {
         String cacheKey = "wallet:" + userId + ":balance";
         BigDecimal cachedBalance = (BigDecimal) redisTemplate.opsForValue().get(cacheKey);
 
@@ -64,7 +68,7 @@ public class WalletService {
     }
 
     @Transactional
-    public void creditWallet(String userId, BigDecimal amount, String referenceId, String description) {
+    public void creditWallet(Long userId, BigDecimal amount, String referenceId, String description) {
         if (transactionRepository.existsByReferenceId(referenceId)) {
             log.warn("Duplicate transaction: {}", referenceId);
             return;
@@ -87,7 +91,7 @@ public class WalletService {
     }
 
     @Transactional
-    public void debitWallet(String userId, BigDecimal amount, String referenceId, String description) {
+    public void debitWallet(Long userId, BigDecimal amount, String referenceId, String description) {
         Wallet wallet = walletRepository.findByUserIdWithLock(userId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
@@ -108,7 +112,7 @@ public class WalletService {
 //        eventPublisher.publishMoneyDebited(userId, amount);
     }
 
-    private void createTransaction(Long walletId, String userId, TransactionType type,
+    private void createTransaction(Long walletId, Long userId, TransactionType type,
                                    TransactionCategory category, BigDecimal amount,
                                    BigDecimal balanceBefore, BigDecimal balanceAfter,
                                    TransactionStatus status, String referenceId, String description) {

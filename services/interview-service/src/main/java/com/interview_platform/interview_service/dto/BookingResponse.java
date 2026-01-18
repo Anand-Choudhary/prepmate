@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class BookingResponse {
-    private String id;
+    private Long id;
     private String bookingReference;
-    private String slotId;
-    private String interviewerId;
+    private Long slotId;
+    private Long interviewerId;
     private String interviewerName;
-    private String intervieweeId;
+    private Long intervieweeId;
     private String intervieweeName;
     private String title;
     private LocalDateTime startTime;
@@ -27,4 +27,5 @@ public class BookingResponse {
     private String notes;
     private String bookingStatus;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

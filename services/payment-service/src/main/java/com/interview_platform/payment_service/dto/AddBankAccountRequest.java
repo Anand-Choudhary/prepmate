@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddBankAccountRequest {
     @NotBlank(message = "User ID is required")
-    private String userId;
+    private Long userId;
 
     @NotBlank(message = "Account holder name is required")
     private String accountHolderName;

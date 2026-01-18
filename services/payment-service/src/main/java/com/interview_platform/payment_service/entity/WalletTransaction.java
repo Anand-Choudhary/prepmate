@@ -22,7 +22,7 @@ public class WalletTransaction extends BaseModel{
     private Long walletId;
 
     @Column(nullable = false)
-    private String userId;
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -57,6 +57,7 @@ public class WalletTransaction extends BaseModel{
     @Column(length = 255)
     private String payoutId;
 
+    @Column(length = 255)
     private UUID bankAccountId;
 
     @Column(unique = true)

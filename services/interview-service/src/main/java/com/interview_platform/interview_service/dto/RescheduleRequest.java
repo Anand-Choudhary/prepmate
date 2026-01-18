@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RescheduleRequest {
     @NotBlank(message = "New slot ID is required")
-    private String newSlotId;
+    private Long newSlotId;
 
     private String notes;
 }

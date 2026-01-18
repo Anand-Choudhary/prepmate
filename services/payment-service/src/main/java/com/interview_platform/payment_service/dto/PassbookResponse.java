@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PassbookResponse {
-    private String userId;
+    private Long userId;
     private BigDecimal currentBalance;
     private List<TransactionDTO> transactions;
     private Integer totalPages;

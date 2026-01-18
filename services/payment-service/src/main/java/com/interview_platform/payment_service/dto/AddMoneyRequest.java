@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AddMoneyRequest {
     @NotBlank(message = "User ID is required")
-    private String userId;
+    private Long userId;
 
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "1.0", message = "Amount must be at least ₹1")

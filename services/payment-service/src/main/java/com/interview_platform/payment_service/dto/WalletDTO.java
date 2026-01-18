@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WalletDTO {
     private Long id;
-    private String userId;
+    private Long userId;
     private BigDecimal balance;
     private String currency;
     private String status;

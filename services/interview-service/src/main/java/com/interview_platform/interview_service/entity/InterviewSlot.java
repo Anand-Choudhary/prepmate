@@ -4,8 +4,11 @@ import com.interview_platform.interview_service.utils.SlotStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "interview_slot")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,6 +25,9 @@ public class InterviewSlot extends BaseModel{
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "slot_date", nullable = false)
+    private LocalDate slotDate;
+
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
@@ -34,13 +40,7 @@ public class InterviewSlot extends BaseModel{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SlotStatus status;
-
-    @Column(name = "meeting_link")
-    private String meetingLink;
-
-    @Column(name = "video_room_id")
-    private String videoRoomId;
-
+    
     @Version
     @Column(nullable = false)
     private Long version;
@@ -59,6 +59,9 @@ public class InterviewSlot extends BaseModel{
         if (version == null) {
             version = 0L;
         }
+        if (slotDate == null && startTime != null) {
+            slotDate = startTime.toLocalDate();
+        }
     }
 
     public boolean isAvailable() {
@@ -69,10 +72,8 @@ public class InterviewSlot extends BaseModel{
         return startTime.isAfter(LocalDateTime.now().plusHours(minHours));
     }
 
-    public void markAsBooked(Long intervieweeId, String videoRoomId, String meetingLink) {
+    public void markAsBooked(Long intervieweeId) {
         this.intervieweeId = intervieweeId;
-        this.videoRoomId = videoRoomId;
-        this.meetingLink = meetingLink;
         this.status = SlotStatus.BOOKED;
         this.bookedAt = LocalDateTime.now();
     }

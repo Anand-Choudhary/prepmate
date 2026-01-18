@@ -92,37 +92,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(DistributedLockService.LockAcquisitionException.class)
-    public ResponseEntity<ErrorResponse> handleLockAcquisitionFailure(
-            DistributedLockService.LockAcquisitionException ex, WebRequest request) {
-        log.error("Lock acquisition failed: {}", ex.getMessage());
-        ErrorResponse error = buildErrorResponse("LOCK_ACQUISITION_FAILED",
-                "Too many concurrent requests. Please try again.", request);
-        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(error);
-    }
-
-    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(
-            ObjectOptimisticLockingFailureException ex, WebRequest request) {
-        log.warn("Optimistic locking failure: {}", ex.getMessage());
-        ErrorResponse error = buildErrorResponse("CONCURRENT_MODIFICATION",
-                "This slot was just modified. Please refresh and try again.", request);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(
-            MethodArgumentNotValidException ex, WebRequest request) {
-        String errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
-
-        log.warn("Validation error: {}", errors);
-        ErrorResponse error = buildErrorResponse("VALIDATION_ERROR", errors, request);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
+//    @ExceptionHandler(DistributedLockService.LockAcquisitionException.class)
+//    public ResponseEntity<ErrorResponse> handleLockAcquisitionFailure(
+//            DistributedLockService.LockAcquisitionException ex, WebRequest request) {
+//        log.error("Lock acquisition failed: {}", ex.getMessage());
+//        ErrorResponse error = buildErrorResponse("LOCK_ACQUISITION_FAILED",
+//                "Too many concurrent requests. Please try again.", request);
+//        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(error);
+//    }
+//
+//    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+//    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(
+//            ObjectOptimisticLockingFailureException ex, WebRequest request) {
+//        log.warn("Optimistic locking failure: {}", ex.getMessage());
+//        ErrorResponse error = buildErrorResponse("CONCURRENT_MODIFICATION",
+//                "This slot was just modified. Please refresh and try again.", request);
+//        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+//    }
+//
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<ErrorResponse> handleValidationErrors(
+//            MethodArgumentNotValidException ex, WebRequest request) {
+//        String errors = ex.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+//                .collect(Collectors.joining(", "));
+//
+//        log.warn("Validation error: {}", errors);
+//        ErrorResponse error = buildErrorResponse("VALIDATION_ERROR", errors, request);
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {

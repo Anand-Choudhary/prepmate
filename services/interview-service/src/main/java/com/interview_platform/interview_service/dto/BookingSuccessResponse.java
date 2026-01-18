@@ -14,13 +14,11 @@ import java.time.LocalDateTime;
 public class BookingSuccessResponse {
     private String bookingId;
     private String bookingReference;
-    private String slotId;
-    private String interviewerId;
-    private String intervieweeId;
+    private Long slotId;
+    private Long interviewerId;
+    private Long intervieweeId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String meetingLink;
-    private String videoRoomId;
     private String message;
     private LocalDateTime bookedAt;
 }

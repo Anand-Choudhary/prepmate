@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Setter
@@ -26,12 +27,12 @@ public class BaseModel
     @Column(
             name = "created_at"
     )
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(
             name = "updated_at"
     )
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
 
 
@@ -42,14 +43,14 @@ public class BaseModel
     @PrePersist
     void beforeCreate() {
         if (this.createdAt == null) {
-            this.setCreatedAt(new Date());
+            this.setCreatedAt(LocalDateTime.now());
         }
-        this.setUpdatedAt(new Date());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
     @PreUpdate
     void beforeUpdate() {
-        this.setUpdatedAt(new Date());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BankAccountDTO {
     private Long id;
-    private String userId;
+    private Long userId;
     private String accountHolderName;
     private String accountNumberMasked;
     private String ifscCode;

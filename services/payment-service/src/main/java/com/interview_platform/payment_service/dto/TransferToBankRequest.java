@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class TransferToBankRequest {
     @NotBlank(message = "User ID is required")
-    private String userId;
+    private Long userId;
 
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "100.0", message = "Minimum transfer amount is ₹100")

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,15 +19,16 @@ public class SlotResponse {
     private String interviewerName;
     private Long intervieweeId;
     private String intervieweeName;
-    private String title;
     private String description;
+    private LocalDate slotDate;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer durationMinutes;
     private SlotStatus status;
     private String meetingLink;
     private String videoRoomId;
-    private Long version;
-    private LocalDateTime createdAt;
+    private LocalDateTime cancelledAt;
     private LocalDateTime bookedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

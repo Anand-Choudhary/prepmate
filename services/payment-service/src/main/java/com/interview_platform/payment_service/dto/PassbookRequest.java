@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PassbookRequest {
     @NotBlank(message = "User ID is required")
-    private String userId;
+    private Long userId;
     private LocalDateTime fromDate;
     private LocalDateTime toDate;
     private Integer page = 0;

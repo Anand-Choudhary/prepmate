@@ -4,6 +4,7 @@ import com.interview_platform.payment_service.dto.TransferResponse;
 import com.interview_platform.payment_service.dto.TransferToBankRequest;
 import com.interview_platform.payment_service.entity.BankAccount;
 import com.interview_platform.payment_service.repository.BankAccountRepository;
+import com.interview_platform.payment_service.security.UserContext;
 import com.razorpay.RazorpayClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,9 @@ public class BankTransferService {
         if (request.getAmount().compareTo(new BigDecimal("1000")) < 0) {
             throw new RuntimeException("Minimum transfer amount is ₹1000");
         }
+        Long userId = UserContext.getUserId();
 
-        BigDecimal balance = walletService.getBalance(request.getUserId());
+        BigDecimal balance = walletService.getBalance(userId);
         if (balance.compareTo(request.getAmount()) < 0) {
             throw new RuntimeException("Insufficient balance");
         }

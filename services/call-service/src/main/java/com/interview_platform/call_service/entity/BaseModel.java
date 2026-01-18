@@ -1,12 +1,16 @@
 package com.interview_platform.call_service.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
+@Setter
+@Getter
 @MappedSuperclass
 @ToString
 public class BaseModel
@@ -18,17 +22,17 @@ public class BaseModel
             name = "id"
     )
     @Id
-    private Long id;
+    private UUID id;
 
     @Column(
             name = "created_at"
     )
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(
             name = "updated_at"
     )
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     public BaseModel() {
     }
@@ -37,38 +41,23 @@ public class BaseModel
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
 
     @PrePersist
     void beforeCreate() {
         if (this.createdAt == null) {
-            this.setCreatedAt(new Date());
+            this.setCreatedAt(LocalDateTime.now());
         }
-        this.setUpdatedAt(new Date());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
     @PreUpdate
     void beforeUpdate() {
-        this.setUpdatedAt(new Date());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
 }

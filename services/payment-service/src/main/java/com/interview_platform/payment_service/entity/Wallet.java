@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class Wallet extends BaseModel{
 
     @Column(unique = true, nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;

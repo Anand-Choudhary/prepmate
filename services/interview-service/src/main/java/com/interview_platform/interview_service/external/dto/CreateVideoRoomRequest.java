@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CreateVideoRoomRequest {
-    private String title;
-    private String hostId;
+    private Long hostId;
     private LocalDateTime scheduledTime;
     private Integer durationMinutes;
     private String interviewSlotId;

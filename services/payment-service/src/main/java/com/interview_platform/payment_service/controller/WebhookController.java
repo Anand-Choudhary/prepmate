@@ -1,12 +1,18 @@
 package com.interview_platform.payment_service.controller;
 
+import com.interview_platform.payment_service.dto.ApiResponse;
+import com.interview_platform.payment_service.exceptions.WebhookProcessingException;
 import com.interview_platform.payment_service.service.PaymentGatewayService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/wallet/webhooks")
@@ -16,7 +22,7 @@ public class WebhookController {
     private final PaymentGatewayService paymentGatewayService;
 
     @PostMapping("/payment")
-    public ResponseEntity<String> handlePaymentWebhook(@RequestBody String payload,
+    public ResponseEntity<ApiResponse<String>> handlePaymentWebhook(@RequestBody String payload,
                                                        @RequestHeader("X-Razorpay-Signature") String signature) {
         try {
             JSONObject json = new JSONObject(payload);
@@ -30,10 +36,10 @@ public class WebhookController {
                 paymentGatewayService.handlePaymentSuccess(orderId, paymentId, signature);
             }
 
-            return ResponseEntity.ok("Webhook processed");
+            return ResponseEntity.ok(ApiResponse.success("Processed", "Webhook processed"));
         } catch (Exception e) {
             log.error("Webhook processing failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+            throw new WebhookProcessingException("Failed to process Razorpay webhook", e);
         }
     }
 }

@@ -15,13 +15,13 @@ import java.util.Optional;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
-    Optional<Wallet> findByUserId(String userId);
+    Optional<Wallet> findByUserId(Long userId);
 
     @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT w FROM Wallet w WHERE w.userId = :userId")
-    Optional<Wallet> findByUserIdWithLock(@Param("userId") String userId);
+    Optional<Wallet> findByUserIdWithLock(@Param("userId") Long userId);
 
-    boolean existsByUserId(String userId);
+    boolean existsByUserId(Long userId);
 
     List<Wallet> findByStatus(WalletStatus status);
 

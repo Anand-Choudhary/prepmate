@@ -12,28 +12,28 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface InterviewBookingRepository extends JpaRepository<InterviewBooking, String> {
+public interface InterviewBookingRepository extends JpaRepository<InterviewBooking, Long> {
 
     // Find booking by reference
     Optional<InterviewBooking> findByBookingReference(String bookingReference);
 
     // Find booking by slot ID
-    Optional<InterviewBooking> findBySlotId(String slotId);
+    Optional<InterviewBooking> findBySlotId(Long slotId);
 
     // Find bookings by interviewee
     List<InterviewBooking> findByIntervieweeIdAndBookingStatusInOrderByCreatedAtDesc(
-            String intervieweeId,
+            Long intervieweeId,
             List<BookingStatus> statuses
     );
 
     // Find bookings by interviewer
     List<InterviewBooking> findByInterviewerIdAndBookingStatusInOrderByCreatedAtDesc(
-            String interviewerId,
+            Long interviewerId,
             List<BookingStatus> statuses
     );
 
     // Check if booking exists for slot
-    boolean existsBySlotIdAndBookingStatus(String slotId, BookingStatus status);
+    boolean existsBySlotIdAndBookingStatus(Long slotId, BookingStatus status);
 
     // Find bookings that need reminders
     @Query("SELECT b FROM InterviewBooking b " +
@@ -52,7 +52,7 @@ public interface InterviewBookingRepository extends JpaRepository<InterviewBooki
             "AND b.bookingStatus = 'CONFIRMED' " +
             "AND b.createdAt BETWEEN :start AND :end")
     long countBookingsByIntervieweeInDateRange(
-            @Param("intervieweeId") String intervieweeId,
+            @Param("intervieweeId") Long intervieweeId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );

@@ -2,14 +2,13 @@ package com.interview_platform.interview_service.entity;
 
 
 import com.interview_platform.interview_service.utils.BookingStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "interview_booking")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,6 +24,12 @@ public class InterviewBooking extends BaseModel
 
     @Column(name = "interviewee_id", nullable = false)
     private Long intervieweeId;
+
+    @Column(name = "meeting_link")
+    private String meetingLink;
+
+    @Column(name = "video_room_id")
+    private String videoRoomId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status", nullable = false)
