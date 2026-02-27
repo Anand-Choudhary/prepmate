@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -13,6 +14,12 @@ public interface MinuteQualityRepository extends JpaRepository<MinuteQuality, Lo
     List<MinuteQuality> findByRoomTokenAndUserIdOrderByMinuteNumber(
             String roomToken,
             Long userId
+    );
+
+    List<MinuteQuality> findByRoomIdAndTimestampBetween(
+            String roomId,
+            LocalDateTime startTime,
+            LocalDateTime endTime
     );
 
 

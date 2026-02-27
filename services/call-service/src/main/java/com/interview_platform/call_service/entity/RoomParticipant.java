@@ -2,9 +2,7 @@ package com.interview_platform.call_service.entity;
 
 import com.interview_platform.call_service.utils.ParticipantRole;
 import com.interview_platform.call_service.utils.ParticipantStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,17 +10,19 @@ import java.util.UUID;
 
 
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "room_participants")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomParticipant extends BaseModel
-{
-    @Column(nullable = false)
-    private UUID roomId;
+@Builder
+public class RoomParticipant extends BaseModel {
 
     @Column(nullable = false)
-    private String userId;
+    private String roomToken;
+
+    @Column(nullable = false)
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -36,8 +36,13 @@ public class RoomParticipant extends BaseModel
     @Column(nullable = false)
     private ParticipantStatus status = ParticipantStatus.WAITING;
 
-    private String connectionQuality;  // GOOD, FAIR, POOR
-
     @Column(columnDefinition = "TEXT")
     private String metadata;
+
+    private Integer participantGoodMinutes;
+
+    private Integer participantPoorMinutes;
+
+    private Double participantDiscount;
+
 }

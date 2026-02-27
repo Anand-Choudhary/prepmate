@@ -1,10 +1,14 @@
 package com.interview_platform.call_service.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 
 
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "minute_quality")
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

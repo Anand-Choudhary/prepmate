@@ -7,5 +7,6 @@ public enum RoomStatus
     ACTIVE,
     COMPLETED,
     CANCELLED,
-    EXPIRED
+    EXPIRED,
+    TERMINATED
 }

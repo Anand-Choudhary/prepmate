@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,12 +16,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RoomResponse
 {
-    private UUID roomId;
     private String roomToken;
-    private String interviewId;
-    private String interviewerId;
-    private String intervieweeId;
-    private LocalDateTime scheduledAt;
+    private String bookingReference;
+    private Long interviewerId;
+    private Long intervieweeId;
+    private LocalDate scheduledAt;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
     private String status;

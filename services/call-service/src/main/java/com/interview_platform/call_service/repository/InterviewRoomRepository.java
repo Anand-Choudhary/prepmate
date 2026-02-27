@@ -10,26 +10,25 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface InterviewRoomRepository extends JpaRepository<InterviewRoom, UUID> {
+public interface InterviewRoomRepository extends JpaRepository<InterviewRoom, String> {
 
     Optional<InterviewRoom> findByRoomToken(String roomToken);
 
-    Optional<InterviewRoom> findByInterviewId(String interviewId);
+    Optional<InterviewRoom> findByBookingReference(String booking);
 
     List<InterviewRoom> findByStatus(RoomStatus status);
 
-    List<InterviewRoom> findByInterviewerId(String interviewerId);
-
-    List<InterviewRoom> findByIntervieweeId(String intervieweeId);
+//    List<InterviewRoom> findByInterviewerId(String interviewerId);
+//
+//    List<InterviewRoom> findByIntervieweeId(String intervieweeId);
 
     @Query("SELECT r FROM InterviewRoom r WHERE r.interviewerId = :userId OR r.intervieweeId = :userId")
-    List<InterviewRoom> findByParticipantUserId(@Param("userId") String userId);
+    List<InterviewRoom> findByParticipantUserId(@Param("userId") Long userId);
 
     // Find rooms scheduled between dates
-    List<InterviewRoom> findByScheduledAtBetween(LocalDateTime start, LocalDateTime end);
+//    List<InterviewRoom> findByScheduledAtBetween(LocalDateTime start, LocalDateTime end);
 
     // Find active rooms
     @Query("SELECT r FROM InterviewRoom r WHERE r.status = 'ACTIVE'")
@@ -41,5 +40,13 @@ public interface InterviewRoomRepository extends JpaRepository<InterviewRoom, UU
     List<InterviewRoom> findExpiredRooms(@Param("expiryTime") LocalDateTime expiryTime);
 
     // Check if room exists for interview
-    boolean existsByInterviewId(String interviewId);
+//    boolean existsByInterviewId(String interviewId);
+
+//    @Query("""
+//        SELECT r FROM InterviewRoom r
+//        WHERE r.scheduledEndTime < :cutoffTime
+//        AND r.status = 'ACTIVE'
+//        ORDER BY r.scheduledEndTime ASC
+//    """)
+//    List<InterviewRoom> findOverdueRooms(@Param("cutoffTime") LocalDateTime cutoffTime);
 }

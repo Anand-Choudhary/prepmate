@@ -36,7 +36,7 @@ public class DistributedLockService {
 
             if (!acquired) {
                 log.warn("Failed to acquire lock for slot: {}", slotId);
-                throw new LockAcquisitionException("Could not acquire lock for slot: " + slotId);
+                throw new LockAcquisitionException("Could not book slot: " + slotId + ",try again later");
             }
 
             log.debug("Lock acquired for slot: {}", slotId);

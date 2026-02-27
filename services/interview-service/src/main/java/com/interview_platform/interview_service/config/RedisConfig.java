@@ -24,9 +24,7 @@ public class RedisConfig {
     @Value("${spring.data.redis.port:6379}")
     private int redisPort;
 
-    /**
-     * Redisson client for distributed locks
-     */
+
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
@@ -41,9 +39,7 @@ public class RedisConfig {
         return Redisson.create(config);
     }
 
-    /**
-     * Redis template for caching
-     */
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -73,9 +69,6 @@ public class RedisConfig {
         return template;
     }
 
-    /**
-     * Object mapper for JSON serialization
-     */
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

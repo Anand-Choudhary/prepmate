@@ -85,6 +85,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleResponseFromDownstream(SlotNotFoundException ex, WebRequest request) {
+        log.error("Error from downstream: {}", ex.getMessage());
+        ErrorResponse error = buildErrorResponse("Error from downstream", ex.getMessage(), request);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(InvalidSlotException.class)
     public ResponseEntity<ErrorResponse> handleInvalidSlot(InvalidSlotException ex, WebRequest request) {
         log.warn("Invalid slot: {}", ex.getMessage());

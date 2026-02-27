@@ -39,8 +39,6 @@ public class EntityMapper
                 .endTime(slot.getEndTime())
                 .durationMinutes(slot.getDurationMinutes())
                 .status(SlotStatus.valueOf(slot.getStatus().name()))
-                .meetingLink(slot.getMeetingLink())
-                .videoRoomId(slot.getVideoRoomId())
                 .bookedAt(slot.getBookedAt())
                 .cancelledAt(slot.getCancelledAt())
                 .createdAt(slot.getCreatedAt())

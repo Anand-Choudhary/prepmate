@@ -19,7 +19,7 @@ import java.util.Optional;
 public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, Long> {
 
     List<InterviewSlot> findByInterviewerIdAndStatusAndStartTimeAfterOrderByStartTimeAsc(
-            String interviewerId,
+            Long interviewerId,
             SlotStatus status,
             LocalDateTime after
     );
@@ -34,7 +34,7 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, Lo
             "WHERE ia.interviewerId = :interviewerId " +
             "AND ia.slotDate BETWEEN :startDate AND :endDate " +
             "AND ia.isActive = true " +
-            "ORDER BY ia.availabilityDate, ia.startTime")
+            "ORDER BY ia.slotDate, ia.startTime")
     List<InterviewSlot> findAvailableSlotsForInterviewer
             (Long interviewerId,
              LocalDate startDate,
@@ -78,13 +78,13 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, Lo
 
     // Find slots by interviewee
     List<InterviewSlot> findByIntervieweeIdAndStatusInOrderByStartTimeAsc(
-            String intervieweeId,
+            Long intervieweeId,
             List<SlotStatus> statuses
     );
 
     // Find slots by interviewer
     List<InterviewSlot> findByInterviewerIdAndStatusInOrderByStartTimeAsc(
-            String interviewerId,
+            Long interviewerId,
             List<SlotStatus> statuses
     );
 
@@ -96,7 +96,7 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, Lo
     // Update slot status (for batch operations)
     @Modifying
     @Query("UPDATE InterviewSlot s SET s.status = :newStatus WHERE s.id IN :slotIds")
-    int updateSlotStatus(@Param("slotIds") List<String> slotIds, @Param("newStatus") SlotStatus newStatus);
+    int updateSlotStatus(@Param("slotIds") List<Long> slotIds, @Param("newStatus") SlotStatus newStatus);
 
     // Check for duplicate booking attempt
     @Query("SELECT COUNT(s) > 0 FROM InterviewSlot s WHERE s.intervieweeId = :intervieweeId " +

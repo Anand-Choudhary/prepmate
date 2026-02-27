@@ -22,7 +22,7 @@ public class BaseModel
             name = "id"
     )
     @Id
-    private UUID id;
+    private Long id;
 
     @Column(
             name = "created_at"
@@ -36,15 +36,6 @@ public class BaseModel
 
     public BaseModel() {
     }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
 
 
     @PrePersist

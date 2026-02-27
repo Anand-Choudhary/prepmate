@@ -1,4 +1,19 @@
 package com.interview_platform.call_service.dto;
 
-public class TerminationMessage {
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TerminationMessage
+{
+    private String type;
+    private String reason;
+    private String message;
+    private java.time.LocalDateTime timestamp;
 }

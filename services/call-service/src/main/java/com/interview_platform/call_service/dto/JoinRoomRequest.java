@@ -1,6 +1,7 @@
 package com.interview_platform.call_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,6 @@ public class JoinRoomRequest {
     @NotBlank(message = "Room token is required")
     private String roomToken;
 
-    @NotBlank(message = "User ID is required")
-    private String userId;
+    @NotNull(message = "User ID is required")
+    private Long userId;
 }

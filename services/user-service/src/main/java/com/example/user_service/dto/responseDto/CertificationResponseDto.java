@@ -2,6 +2,7 @@ package com.example.user_service.dto.responseDto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -15,6 +16,6 @@ public class CertificationResponseDto
     private String name;
     private String issuedBy;
     private Integer year;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

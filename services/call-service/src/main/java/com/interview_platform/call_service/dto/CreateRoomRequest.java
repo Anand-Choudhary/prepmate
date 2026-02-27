@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,17 +17,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreateRoomRequest
 {
-    @NotBlank(message = "Interview ID is required")
-    private String interviewId;
+    @NotBlank(message = "Booking ID is required")
+    private String bookingReference;
 
-    @NotBlank(message = "Interviewer ID is required")
-    private String interviewerId;
+    @NotNull(message = "Interviewer ID is required")
+    private Long interviewerId;
 
-    @NotBlank(message = "Interviewee ID is required")
-    private String intervieweeId;
+    @NotNull(message = "Interviewee ID is required")
+    private Long intervieweeId;
 
     @NotNull(message = "Scheduled time is required")
-    private LocalDateTime scheduledAt;
+    private LocalDate scheduledAt;
+
+    @NotNull(message = "Start time is required")
+    private LocalDateTime startTime;
+
+    @NotNull(message = "End time is required")
+    private LocalDateTime endTime;
 
     private Integer maxDurationMinutes = 120;
 

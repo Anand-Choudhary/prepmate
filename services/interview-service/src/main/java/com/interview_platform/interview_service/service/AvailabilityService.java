@@ -39,7 +39,6 @@ public class AvailabilityService {
 
         List<InterviewerAvailability> allAvailabilities = new ArrayList<>();
 
-        // Process each date
         for (DateSlotRequest dateSlot : request.getDateSlots()) {
 
             String notes = dateSlot.getNotes() != null
@@ -53,7 +52,6 @@ public class AvailabilityService {
                             .startTime(timeSlot.getStartTime())
                             .endTime(timeSlot.getEndTime())
                             .notes(notes)
-//                            .isActive(true)
                             .build())
                     .toList();
 
@@ -139,9 +137,6 @@ public class AvailabilityService {
 
     @Transactional
     public Boolean cancelSlot(Long slotId) {
-        InterviewerAvailability availability = availabilityRepository
-                .findById(slotId)
-                .orElseThrow(() -> new RuntimeException("Slot not found"));
 
         Optional<InterviewSlot> available = slotRepository.findById(slotId);
         available
@@ -151,6 +146,7 @@ public class AvailabilityService {
                                 throw new InvalidCancellationException("Slot is already booked and cannot be cancelled");
                             }
                             slot.setStatus(SlotStatus.CANCELLED);
+                            slot.setIsActive(Boolean.FALSE);
                             slotRepository.save(slot);
                         },
                         () -> {

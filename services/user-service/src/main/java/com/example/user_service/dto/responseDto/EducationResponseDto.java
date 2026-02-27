@@ -4,6 +4,7 @@ package com.example.user_service.dto.responseDto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -18,6 +19,6 @@ public class EducationResponseDto
     private String institute;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

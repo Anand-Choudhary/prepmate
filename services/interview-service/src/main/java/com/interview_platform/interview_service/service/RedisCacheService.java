@@ -9,7 +9,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,32 +29,39 @@ public class RedisCacheService {
 
     // Cache available slots for an interviewer
     public void cacheAvailableSlots(Long interviewerId, List<SlotResponse> slots) {
-        try {
+        try
+        {
             String key = AVAILABLE_SLOTS_PREFIX + interviewerId;
             String json = objectMapper.writeValueAsString(slots);
             redisTemplate.opsForValue().set(key, json, SLOTS_CACHE_TTL);
             log.debug("Cached {} available slots for interviewer: {}", slots.size(), interviewerId);
-        } catch (Exception e) {
-            log.error("Error caching available slots", e);
+        }catch (Exception e)
+        {
+            log.error("Failed to cache available slots for interviewerId={}", interviewerId, e);
         }
     }
 
     // Get cached available slots
-    public List<SlotResponse> getCachedAvailableSlots(Long interviewerId) {
+    public Optional<List<SlotResponse>> getCachedAvailableSlots(Long interviewerId) {
         try {
             String key = AVAILABLE_SLOTS_PREFIX + interviewerId;
-            String json = (String) redisTemplate.opsForValue().get(key);
+            String json = (String)redisTemplate.opsForValue().get(key);
 
-            if (json != null) {
-                log.debug("Cache hit for available slots: {}", interviewerId);
-                return objectMapper.readValue(json, new TypeReference<List<SlotResponse>>() {});
+            if (json == null) {
+                log.debug("Cache miss for available slots: {}", interviewerId);
+                return Optional.empty();
             }
 
-            log.debug("Cache miss for available slots: {}", interviewerId);
-            return null;
+            log.debug("Cache hit for available slots: {}", interviewerId);
+
+            List<SlotResponse> slots =
+                    objectMapper.readValue(json, new TypeReference<List<SlotResponse>>() {});
+
+            return Optional.of(slots);
+
         } catch (Exception e) {
-            log.error("Error reading cached slots", e);
-            return null;
+            log.error("Error reading cached slots for interviewerId={}", interviewerId, e);
+            return Optional.empty();
         }
     }
 
@@ -61,7 +71,8 @@ public class RedisCacheService {
             String key = AVAILABLE_SLOTS_PREFIX + interviewerId;
             redisTemplate.delete(key);
             log.debug("Invalidated slots cache for interviewer: {}", interviewerId);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             log.error("Error invalidating slots cache", e);
         }
     }

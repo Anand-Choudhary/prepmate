@@ -2,15 +2,15 @@ package com.interview_platform.call_service.entity;
 
 
 import com.interview_platform.call_service.utils.EventType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "room_events")
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,13 +18,13 @@ import java.util.UUID;
 public class RoomEvent extends BaseModel
 {
     @Column(nullable = false)
-    private UUID roomId;
+    private String roomToken;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventType eventType;
 
-    private String userId;
+    private Long userId;
 
     @Column(columnDefinition = "TEXT")
     private String metadata;

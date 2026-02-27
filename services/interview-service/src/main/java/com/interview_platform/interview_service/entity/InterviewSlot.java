@@ -40,6 +40,10 @@ public class InterviewSlot extends BaseModel{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SlotStatus status;
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
     
     @Version
     @Column(nullable = false)

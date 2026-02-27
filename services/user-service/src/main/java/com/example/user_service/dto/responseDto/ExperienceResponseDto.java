@@ -2,6 +2,7 @@ package com.example.user_service.dto.responseDto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -17,6 +18,6 @@ public class ExperienceResponseDto
     private Integer startYear;
     private Boolean currentlyWorking;
     private Integer endYear;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

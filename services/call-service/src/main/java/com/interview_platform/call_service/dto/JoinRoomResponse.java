@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,10 +15,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JoinRoomResponse {
-    private UUID roomId;
-    private String userId;
-    private String role;  // INTERVIEWER or INTERVIEWEE
+    private String roomToken;
+    private Long userId;
+    private String role;
     private String status;
+    private String roomStatus;
+    private Boolean billingEnabled;
     private List<String> iceServers;
     private List<ParticipantInfo> otherParticipants;
+    private LocalDateTime startedAt;
+    private LocalDate scheduledAt;
+    private String message;
 }

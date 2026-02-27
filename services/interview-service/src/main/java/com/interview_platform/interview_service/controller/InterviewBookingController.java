@@ -1,9 +1,7 @@
 package com.interview_platform.interview_service.controller;
 
-import com.interview_platform.interview_service.dto.BookSlotRequest;
-import com.interview_platform.interview_service.dto.BookingResponse;
-import com.interview_platform.interview_service.dto.BookingSuccessResponse;
-import com.interview_platform.interview_service.dto.RescheduleRequest;
+import com.interview_platform.interview_service.dto.*;
+import com.interview_platform.interview_service.security.UserContext;
 import com.interview_platform.interview_service.service.InterviewBookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,77 +20,63 @@ public class InterviewBookingController {
 
     private final InterviewBookingService bookingService;
 
-    /**
-     * Book an interview slot (Interviewee)
-     * This endpoint has race condition handling via distributed locks + optimistic locking
-     */
+
     @PostMapping("/slots/{slotId}/book")
-    public ResponseEntity<BookingSuccessResponse> bookSlot(
+    public ResponseEntity<ApiResponse<BookingSuccessResponse>> bookSlot(
             @PathVariable Long slotId,
-            @RequestHeader("X-User-Id") Long intervieweeId,
             @Valid @RequestBody(required = false) BookSlotRequest request
     ) {
+        Long intervieweeId = UserContext.getUserId();
         log.info("Booking slot: {} by interviewee: {}", slotId, intervieweeId);
         BookingSuccessResponse response = bookingService.bookSlot(slotId, intervieweeId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(ApiResponse.success("Slot booked successfully", response));
     }
 
-    /**
-     * Get booking details
-     */
+
     @GetMapping("/bookings/{bookingId}")
-    public ResponseEntity<BookingResponse> getBooking(@PathVariable Long bookingId) {
+    public ResponseEntity<ApiResponse<BookingResponse>> getBooking(@PathVariable Long bookingId) {
         log.info("Getting booking: {}", bookingId);
         BookingResponse response = bookingService.getBooking(bookingId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Booking details fetched", response));
     }
 
-    /**
-     * Cancel a booking
-     */
+
     @PostMapping("/bookings/{bookingId}/cancel")
-    public ResponseEntity<Void> cancelBooking(
-            @PathVariable Long bookingId,
-            @RequestHeader("X-User-Id") Long userId
+    public ResponseEntity<ApiResponse<Boolean>> cancelBooking(
+            @PathVariable Long bookingId
     ) {
+        Long userId = UserContext.getUserId();
         log.info("Cancelling booking: {} by user: {}", bookingId, userId);
         bookingService.cancelBooking(bookingId, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Booking cancelled", Boolean.TRUE));
     }
 
-    /**
-     * Get user's interviews as interviewee
-     */
+
     @GetMapping("/my-interviews")
-    public ResponseEntity<List<BookingResponse>> getMyInterviews(
-            @RequestHeader("X-User-Id") Long userId
-    ) {
+    public ResponseEntity<ApiResponse<List<BookingResponse>>> getMyInterviews()
+    {
+        Long userId = UserContext.getUserId();
         log.info("Getting interviews for interviewee: {}", userId);
         List<BookingResponse> bookings = bookingService.getUserBookings(userId, false);
-        return ResponseEntity.ok(bookings);
+        return ResponseEntity.ok(ApiResponse.success("Booking details fetched", bookings));
     }
 
-    /**
-     * Get user's interviews as interviewer
-     */
     @GetMapping("/my-conducted-interviews")
-    public ResponseEntity<List<BookingResponse>> getMyConductedInterviews(
-            @RequestHeader("X-User-Id") Long userId
+    public ResponseEntity<ApiResponse<List<BookingResponse>>> getMyConductedInterviews(
     ) {
+        Long userId = UserContext.getUserId();
         log.info("Getting conducted interviews for interviewer: {}", userId);
         List<BookingResponse> bookings = bookingService.getUserBookings(userId, true);
-        return ResponseEntity.ok(bookings);
+        return ResponseEntity.ok(ApiResponse.success("Booking details fetched", bookings));
     }
 
-    /**
-     * Reschedule a booking (cancel old, book new)
-     */
+
     @PostMapping("/bookings/{bookingId}/reschedule")
-    public ResponseEntity<BookingSuccessResponse> rescheduleBooking(
+    public ResponseEntity<ApiResponse<BookingSuccessResponse>> rescheduleBooking(
             @PathVariable Long bookingId,
-            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody RescheduleRequest request
     ) {
+        Long userId = UserContext.getUserId();
         log.info("Rescheduling booking: {} to slot: {} by user: {}",
                 bookingId, request.getNewSlotId(), userId);
 
@@ -108,6 +92,6 @@ public class InterviewBookingController {
                 request.getNewSlotId(), userId, bookRequest
         );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success("Booking rescheduled successfully", response));
     }
 }

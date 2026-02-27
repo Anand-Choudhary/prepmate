@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ApiResponse<T> {
     private Boolean success;
     private String message;
+    private String error;
     private T data;
     private LocalDateTime timestamp;
 
@@ -32,5 +33,10 @@ public class ApiResponse<T> {
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
+    }
+
+    public boolean isSuccess()
+    {
+        return success;
     }
 }

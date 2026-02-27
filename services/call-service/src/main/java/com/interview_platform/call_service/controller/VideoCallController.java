@@ -5,266 +5,157 @@ import com.interview_platform.call_service.service.VideoCallService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/video")
+@RequestMapping("/api/call")
 @RequiredArgsConstructor
 @Slf4j
 public class VideoCallController {
 
     private final VideoCallService videoCallService;
+    private final SignalingController signalingController;
 
-    /**
-     * Create a new interview room
-     * POST /api/video/rooms
-     */
+
     @PostMapping("/rooms")
-    public ResponseEntity<RoomResponse> createRoom(
-            @Valid @RequestBody CreateRoomRequest request) {
-
-        log.info("Creating room for interview: {}", request.getInterviewId());
-
-        try {
-            RoomResponse response = videoCallService.createRoom(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            log.error("Failed to create room", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<ApiResponse<RoomResponse>> createRoom(
+            @Valid @RequestBody CreateRoomRequest request)
+    {
+        log.info("Creating room for interview: {}", request.getBookingReference());
+        RoomResponse response = videoCallService.createRoom(request);
+        return ResponseEntity.ok(ApiResponse.success("Room created for interview", response));
     }
 
-    /**
-     * Join an existing room
-     * POST /api/video/rooms/join
-     */
+
     @PostMapping("/rooms/join")
-    public ResponseEntity<?> joinRoom(@Valid @RequestBody JoinRoomRequest request) {
+    public ResponseEntity<ApiResponse<JoinRoomResponse>> joinRoom(@Valid @RequestBody JoinRoomRequest request,
+                                                                  @RequestHeader(value = "X-WebSocket-Session-Id", required = false) String sessionId) {
 
         log.info("User {} attempting to join room", request.getUserId());
+        JoinRoomResponse response = videoCallService.joinRoom(request,sessionId);
 
-        try {
-            JoinRoomResponse response = videoCallService.joinRoom(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            log.error("Failed to join room: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-            log.error("Error joining room", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to join room"));
-        }
+        LiveEventDto event = LiveEventDto.builder()
+                .eventType("USER_JOINED")
+                .userId(request.getUserId())
+                .roomToken(request.getRoomToken())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        signalingController.notifyRoomEvent(request.getRoomToken(), event);
+        return ResponseEntity.ok(ApiResponse.success("Room joined for interview", response));
     }
 
-    /**
-     * Get room details by ID
-     * GET /api/video/rooms/{roomId}
-     */
+
+
     @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<?> getRoomDetails(@PathVariable UUID roomId) {
+    public ResponseEntity<ApiResponse<RoomResponse>> getRoomDetails(@PathVariable String roomToken) {
 
-        log.info("Fetching details for room: {}", roomId);
+        log.info("Fetching details for room: {}", roomToken);
+        RoomResponse response = videoCallService.getRoomDetails(roomToken);
+        return ResponseEntity.ok(ApiResponse.success("Room details fetched", response));
 
-        try {
-            RoomResponse response = videoCallService.getRoomDetails(roomId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            log.error("Room not found: {}", roomId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("Room not found"));
-        } catch (Exception e) {
-            log.error("Error fetching room details", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to fetch room details"));
-        }
     }
 
-    /**
-     * Get room by interview ID
-     * GET /api/video/rooms/interview/{interviewId}
-     */
+
     @GetMapping("/rooms/interview/{interviewId}")
-    public ResponseEntity<?> getRoomByInterviewId(@PathVariable String interviewId) {
+    public ResponseEntity<ApiResponse<RoomResponse>> getRoomByInterviewId(@PathVariable String bookingReference) {
 
-        log.info("Fetching room for interview: {}", interviewId);
-
-        try {
-            RoomResponse response = videoCallService.getRoomByInterviewId(interviewId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            log.error("Room not found for interview: {}", interviewId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("Room not found for interview"));
-        } catch (Exception e) {
-            log.error("Error fetching room by interview ID", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to fetch room"));
-        }
+        log.info("Fetching room for interview: {}", bookingReference);
+        RoomResponse response = videoCallService.getRoomByInterviewId(bookingReference);
+        return ResponseEntity.ok(ApiResponse.success("Room details fetched", response));
     }
 
-    /**
-     * Leave a room
-     * POST /api/video/rooms/{roomId}/leave
-     */
-    @PostMapping("/rooms/{roomId}/leave")
-    public ResponseEntity<?> leaveRoom(
-            @PathVariable UUID roomId,
-            @RequestParam String userId) {
+    @PostMapping("/rooms/leave")
+    public ResponseEntity<ApiResponse<Boolean>> leaveRoom(
+            @Valid @RequestBody LeaveRoomRequest request) {
 
-        log.info("User {} leaving room {}", userId, roomId);
+        log.info("User {} leaving room {}", request.getRoomToken(), request.getUserId());
 
-        try {
-            videoCallService.leaveRoom(roomId, userId);
-            return ResponseEntity.ok(new SuccessResponse("Left room successfully"));
-        } catch (Exception e) {
-            log.error("Error leaving room", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to leave room"));
-        }
+        videoCallService.leaveRoom(request.getRoomToken(), request.getUserId());
+
+        LiveEventDto event = LiveEventDto.builder()
+                .eventType("USER_LEFT")
+                .userId(request.getUserId())
+                .roomToken(request.getRoomToken())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        signalingController.notifyRoomEvent(request.getRoomToken(), event);
+        return ResponseEntity.ok(ApiResponse.success("Left room successfully", Boolean.TRUE));
     }
 
-    /**
-     * End a room (terminate call)
-     * DELETE /api/video/rooms/{roomId}
-     */
+
     @DeleteMapping("/rooms/{roomId}")
-    public ResponseEntity<?> endRoom(
-            @PathVariable UUID roomId,
+    public ResponseEntity<ApiResponse<?>> endRoom(
+            @PathVariable String roomToken,
             @RequestParam String userId) {
 
-        log.info("User {} ending room {}", userId, roomId);
-
-        try {
-            videoCallService.endRoom(roomId);
-            return ResponseEntity.ok(new SuccessResponse("Room ended successfully"));
-        } catch (Exception e) {
-            log.error("Error ending room", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to end room"));
-        }
+        log.info("User {} ending room {}", userId, roomToken);
+        videoCallService.endRoom(roomToken);
+        return ResponseEntity.ok(ApiResponse.success("Left room successfully", Boolean.TRUE));
     }
 
-    /**
-     * Get all rooms for a user (as interviewer or interviewee)
-     * GET /api/video/rooms/user/{userId}
-     */
+
     @GetMapping("/rooms/user/{userId}")
-    public ResponseEntity<?> getUserRooms(@PathVariable String userId) {
+    public ResponseEntity<ApiResponse<List<RoomResponse>>> getUserRooms(@PathVariable Long userId) {
 
         log.info("Fetching rooms for user: {}", userId);
 
-        try {
-            List<RoomResponse> rooms = videoCallService.getUserRooms(userId);
-            return ResponseEntity.ok(rooms);
-        } catch (Exception e) {
-            log.error("Error fetching user rooms", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to fetch rooms"));
-        }
+        List<RoomResponse> rooms = videoCallService.getUserRooms(userId);
+        return ResponseEntity.ok(ApiResponse.success("Left room successfully", rooms));
     }
 
-    /**
-     * Get active rooms
-     * GET /api/video/rooms/active
-     */
+
     @GetMapping("/rooms/active")
-    public ResponseEntity<?> getActiveRooms() {
+    public ResponseEntity<ApiResponse<List<RoomResponse>>> getActiveRooms() {
 
         log.info("Fetching active rooms");
 
-        try {
-            List<RoomResponse> rooms = videoCallService.getActiveRooms();
-            return ResponseEntity.ok(rooms);
-        } catch (Exception e) {
-            log.error("Error fetching active rooms", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to fetch active rooms"));
-        }
+        List<RoomResponse> rooms = videoCallService.getActiveRooms();
+        return ResponseEntity.ok(ApiResponse.success("Active rooms fetched successfully", rooms));
     }
 
-    /**
-     * Start recording
-     * POST /api/video/rooms/{roomId}/recording/start
-     */
+
     @PostMapping("/rooms/{roomId}/recording/start")
-    public ResponseEntity<?> startRecording(
-            @PathVariable UUID roomId,
-            @RequestParam String userId) {
+    public ResponseEntity<ApiResponse<Boolean>> startRecording(
+            @PathVariable String roomToken,
+            @RequestParam Long userId) {
 
-        log.info("User {} starting recording for room {}", userId, roomId);
+        log.info("User {} starting recording for room {}", userId, roomToken);
 
-        try {
-            videoCallService.startRecording(roomId, userId);
-            return ResponseEntity.ok(new SuccessResponse("Recording started"));
-        } catch (RuntimeException e) {
-            log.error("Failed to start recording: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-            log.error("Error starting recording", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to start recording"));
-        }
+        videoCallService.startRecording(roomToken, userId);
+        return ResponseEntity.ok(ApiResponse.success("Recording Started", Boolean.TRUE));
     }
 
-    /**
-     * Stop recording
-     * POST /api/video/rooms/{roomId}/recording/stop
-     */
     @PostMapping("/rooms/{roomId}/recording/stop")
-    public ResponseEntity<?> stopRecording(
-            @PathVariable UUID roomId,
-            @RequestParam String userId) {
+    public ResponseEntity<ApiResponse<String>> stopRecording(
+            @PathVariable String roomToken,
+            @RequestParam Long userId) {
 
-        log.info("User {} stopping recording for room {}", userId, roomId);
+        log.info("User {} stopping recording for room {}", userId, roomToken);
 
-        try {
-            String recordingUrl = videoCallService.stopRecording(roomId, userId);
-            return ResponseEntity.ok(new RecordingResponse(recordingUrl));
-        } catch (RuntimeException e) {
-            log.error("Failed to stop recording: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(e.getMessage()));
-        } catch (Exception e) {
-            log.error("Error stopping recording", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to stop recording"));
-        }
+        String recordingUrl = videoCallService.stopRecording(roomToken, userId);
+        return ResponseEntity.ok(ApiResponse.success("Recording stopped", recordingUrl));
     }
 
-    /**
-     * Get room events/history
-     * GET /api/video/rooms/{roomId}/events
-     */
+
     @GetMapping("/rooms/{roomId}/events")
-    public ResponseEntity<?> getRoomEvents(@PathVariable UUID roomId) {
+    public ResponseEntity<ApiResponse<List<RoomEventDTO>>> getRoomEvents(@PathVariable String roomToken) {
 
-        log.info("Fetching events for room: {}", roomId);
+        log.info("Fetching events for room: {}", roomToken);
 
-        try {
-            List<RoomEventDTO> events = videoCallService.getRoomEvents(roomId);
-            return ResponseEntity.ok(events);
-        } catch (Exception e) {
-            log.error("Error fetching room events", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Failed to fetch room events"));
-        }
+        List<RoomEventDTO> events = videoCallService.getRoomEvents(roomToken);
+        return ResponseEntity.ok(ApiResponse.success("Room events fetched successfully", events));
     }
 
-    /**
-     * Health check
-     * GET /api/video/health
-     */
     @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        return ResponseEntity.ok("Video Call Service is running");
+    public ResponseEntity<ApiResponse<Boolean>> health()
+    {
+        return ResponseEntity.ok(ApiResponse.success("Video Call Service is running", Boolean.TRUE));
     }
 }
 

@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipantInfo {
-    private String userId;
+    private Long userId;
     private String name;
     private String role;
     private String status;
     private LocalDateTime joinedAt;
+    private LocalDateTime leftAt;
 }

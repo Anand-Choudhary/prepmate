@@ -2,41 +2,45 @@ package com.interview_platform.call_service.entity;
 
 
 import com.interview_platform.call_service.utils.RoomStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "interview_rooms")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InterviewRoom extends BaseModel
-{
+@Builder
+public class InterviewRoom extends BaseModel {
 
     @Column(nullable = false)
-    private String interviewId;  // From interview service
+    private String bookingReference;
 
     @Column(unique = true, nullable = false)
     private String roomToken;
 
     @Column(nullable = false)
-    private String interviewerId;
+    private Long interviewerId;
 
     @Column(nullable = false)
-    private String intervieweeId;
+    private Long intervieweeId;
 
-    private LocalDateTime scheduledAt;
+    private LocalDate scheduledAt;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     private LocalDateTime startedAt;
 
     private LocalDateTime endedAt;
 
     @Column(nullable = false)
-    private Integer maxDurationMinutes = 120;
+    private Integer scheduledDurationMinutes;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

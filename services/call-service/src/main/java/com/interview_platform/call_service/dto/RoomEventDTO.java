@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RoomEventDTO {
     private String eventType;
-    private String roomId;
-    private String userId;
+    private String roomToken;
+    private Long userId;
     private String userName;
     private LocalDateTime timestamp;
     private Object metadata;

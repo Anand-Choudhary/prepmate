@@ -3,6 +3,7 @@ package com.example.user_service.dto.responseDto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -19,6 +20,6 @@ public class UserResponseDto
     private String mobile;
     private String profileImg;
     private String baseImg;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

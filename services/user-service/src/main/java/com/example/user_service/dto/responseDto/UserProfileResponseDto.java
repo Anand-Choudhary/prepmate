@@ -2,6 +2,7 @@ package com.example.user_service.dto.responseDto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
@@ -29,6 +30,6 @@ public class UserProfileResponseDto
     @Builder.Default
     private Set<CertificationResponseDto> certifications = new HashSet<>();
 
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

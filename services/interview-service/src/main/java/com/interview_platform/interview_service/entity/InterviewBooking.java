@@ -28,8 +28,8 @@ public class InterviewBooking extends BaseModel
     @Column(name = "meeting_link")
     private String meetingLink;
 
-    @Column(name = "video_room_id")
-    private String videoRoomId;
+    @Column(name = "room_token")
+    private String roomToken;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status", nullable = false)
@@ -50,7 +50,7 @@ public class InterviewBooking extends BaseModel
             bookingReference = generateBookingReference();
         }
         if (bookingStatus == null) {
-            bookingStatus = BookingStatus.CONFIRMED;
+            bookingStatus = BookingStatus.PENDING;
         }
         if (reminderSent == null) {
             reminderSent = false;

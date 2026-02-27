@@ -29,10 +29,6 @@ public class InterviewerAvailability extends BaseModel
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-//    @Column(name = "is_active", nullable = false)
-//    @Builder.Default
-//    private Boolean isActive = true;
-
     @Column(name = "notes")
     private String notes;
 }

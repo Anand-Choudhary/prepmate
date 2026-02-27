@@ -17,6 +17,8 @@ public class CreateRoomRequest {
     private Long interviewerId;
     private Long intervieweeId;
     private LocalDate scheduledAt;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Integer maxDurationMinutes = 60;
 
 }

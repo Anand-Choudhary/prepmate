@@ -1,7 +1,7 @@
 package com.interview_platform.call_service.controller;
 
 import com.interview_platform.call_service.dto.ChatMessage;
-import com.interview_platform.call_service.dto.RoomEventDTO;
+import com.interview_platform.call_service.dto.LiveEventDto;
 import com.interview_platform.call_service.dto.SignalMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,11 +130,11 @@ public class SignalingController {
      * Notify room about participant events
      * (joined, left, status changes)
      */
-    public void notifyRoomEvent(String roomId, RoomEventDTO event) {
-        log.info("Broadcasting room event {} to room {}", event.getEventType(), roomId);
+    public void notifyRoomEvent(String roomToken, LiveEventDto event) {
+        log.info("Broadcasting room event {} to room {}", event.getEventType(), roomToken);
 
         messagingTemplate.convertAndSend(
-                "/topic/room/" + roomId + "/events",
+                "/topic/room/" + roomToken + "/events",
                 event
         );
     }

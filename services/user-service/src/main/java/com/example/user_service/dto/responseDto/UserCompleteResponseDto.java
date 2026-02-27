@@ -3,6 +3,7 @@ package com.example.user_service.dto.responseDto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -20,6 +21,6 @@ public class UserCompleteResponseDto
     private String profileImg;
     private String baseImg;
     private UserProfileResponseDto profile;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
