@@ -5,17 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VideoRoomResponse {
-    private String roomId;
-    private String meetingLink;
-    private String hostJoinLink;
-    private String guestJoinLink;
-    private LocalDateTime scheduledTime;
-    private String status;
+public class CreateRoomRequest {
+    private String bookingReference;
+    private Long interviewerId;
+    private Long intervieweeId;
+    private LocalDate scheduledAt;
+    private Integer maxDurationMinutes = 60;
+
 }
